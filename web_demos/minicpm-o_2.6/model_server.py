@@ -550,7 +550,7 @@ class StreamManager:
                     yield None, '\n<end>'
 
         except Exception as e:
-            logger.error(f"发生异常:{e}")
+            logger.error(f"Exception Occured :{e}")
             import traceback
             traceback.print_exc()
             raise

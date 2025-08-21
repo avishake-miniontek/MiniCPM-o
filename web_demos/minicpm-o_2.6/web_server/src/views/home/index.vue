@@ -3,7 +3,7 @@
         <div class="home-page-header">
             <div class="home-page-header-logo">
                 <!-- <img src="@/assets/images/logo.png" /> -->
-                <SvgIcon name="miniCPM2.6" class="logo-icon" />
+                <div>Zoyel Vision</div>
             </div>
             <div class="home-page-header-menu">
                 <div
@@ -40,8 +40,9 @@
             <VideoCallWs v-else-if="isWebSocket && activeTab === 'video'" v-model="isCalling" />
             <VideoCall v-else-if="!isWebSocket && activeTab === 'video'" v-model="isCalling" />
             <!-- TODO: https is required to support chatbot in iframe -->
+             <!-- Changed from localhost to server IP -->
             <iframe
-                src="http://127.0.0.1:8000/"
+                src="http://51.159.132.110:8000/"
                 frameborder="0"
                 width="100%"
                 height="100%"
