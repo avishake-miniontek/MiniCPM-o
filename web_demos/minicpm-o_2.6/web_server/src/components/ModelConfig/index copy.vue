@@ -192,7 +192,7 @@
         if (e.length > 1) {
             const val = e[e.length - 1];
             configData.value.timbre = [val];
-            // 默认音色
+            // Default sound
             if (val === 1) {
                 configData.value.audioFormat = 'mp3';
                 configData.value.base64Str = '';
@@ -235,7 +235,7 @@
             configData.value.assistantPrompt = defaultAssistantPrompt;
         }
     };
-    // 配置发生变化，更新到localstorage中
+    // Configuration changes are updated to localstorage
     watch(configData.value, () => {
         handleSetStorage();
     });

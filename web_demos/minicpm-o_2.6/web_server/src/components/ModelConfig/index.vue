@@ -208,9 +208,9 @@
             } else if (newLocale === 'zh' && type.value === 'voice') {
                 defaultAssistantPrompt = '作为助手，你将使用这种声音风格说话。';
             } else if (newLocale === 'en' && type.value === 'video') {
-                defaultAssistantPrompt = 'As an assistant, you will speak using this voice style.';
+                defaultAssistantPrompt = 'As an assistant, you will speak using this voice style. You always respond in English.';
             } else {
-                defaultAssistantPrompt = 'As an assistant, you will speak using this voice style.';
+                defaultAssistantPrompt = 'As an assistant, you will speak using this voice style. You always respond in English.';
             }
             configData.value.assistantPrompt = defaultAssistantPrompt;
         },
