@@ -29,11 +29,11 @@
         let minutes = Math.floor(remainingTime.value / 60);
         let seconds = remainingTime.value % 60;
 
-        // 格式化分钟和秒，确保它们是两位数
+        // Format minutes and seconds, ensuring they are two digits
         minute.value = minutes < 10 ? '0' + minutes : minutes;
         second.value = seconds < 10 ? '0' + seconds : seconds;
 
-        // 剩余1分钟提示用户
+        // Prompt user with 1 minute remaining
         if (remainingTime.value === tipsRemainingTime) {
             ElMessage({
                 type: 'warning',
@@ -42,7 +42,7 @@
                 customClass: 'time-warning'
             });
         }
-        // 防止倒计时变成负数
+        // Prevent countdown from becoming negative
         if (remainingTime.value > 0) {
             remainingTime.value--;
         } else {

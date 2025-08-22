@@ -109,7 +109,7 @@
                 // if (!skipDisabled.value) {
                 vadTimer && clearTimeout(vadTimer);
                 vadTimer = setTimeout(() => {
-                    console.log('打断时间: ', +new Date());
+                    console.log('Interruption time: ', +new Date());
                     skipVoice();
                 }, 500);
                 // }

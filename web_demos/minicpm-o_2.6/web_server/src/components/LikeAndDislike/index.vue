@@ -18,8 +18,8 @@
     >
         <el-input type="textarea" :rows="4" v-model="comment" />
         <div class="operate-btn">
-            <el-button type="primary" :loading="submitLoading" @click="submitFeedback">确定</el-button>
-            <el-button @click="cancelFeedback">取消</el-button>
+            <el-button type="primary" :loading="submitLoading" @click="submitFeedback">Sure</el-button>
+            <el-button @click="cancelFeedback">Cancel</el-button>
         </div>
     </el-dialog>
 </template>
@@ -40,7 +40,7 @@
         feedbackStatus.value = val;
         dialogVisible.value = true;
     };
-    // 提交反馈
+    // Submit Feedback
     const submitFeedback = async () => {
         submitLoading.value = true;
         const { code, message } = await feedback({
@@ -58,7 +58,7 @@
             });
             return;
         }
-        ElMessage.success('反馈成功');
+        ElMessage.success('Feedback success');
         dialogVisible.value = false;
         setTimeout(() => {
             feedbackStatus.value = '';

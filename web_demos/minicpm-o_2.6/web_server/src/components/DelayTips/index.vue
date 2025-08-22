@@ -1,6 +1,6 @@
 <template>
     <div class="delay-tips">
-        <span>当前发生延迟，目前延迟{{ delayTimestamp }}ms，积压{{ delayCount * 200 }}ms未发</span>
+        <span>There is a delay of {{ delayTimestamp }}ms, and a backlog of {{ delayCount * 200 }}ms.</span>
     </div>
 </template>
 <script setup>

@@ -1,7 +1,7 @@
 <template>
     <div class="extra-info">
-        <div class="model-version" v-if="modelVersion">模型版本: {{ modelVersion }}</div>
-        <div class="web-version">前端版本: {{ webVersion }}</div>
+        <div class="model-version" v-if="modelVersion">Model version: {{ modelVersion }}</div>
+        <div class="web-version">Front-end version: {{ webVersion }}</div>
     </div>
 </template>
 
