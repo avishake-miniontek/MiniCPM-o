@@ -131,14 +131,14 @@ def get_speech_timestamps(
         )
 
     sampling_rate = 16000
-    min_speech_samples = sampling_rate * min_speech_duration_ms / 1000 #如果间隔区间没这个长度就不会添加
+    min_speech_samples = sampling_rate * min_speech_duration_ms / 1000 #If the interval does not have this length, it will not be added
     speech_pad_samples = sampling_rate * speech_pad_ms / 1000
     max_speech_samples = (
         sampling_rate * max_speech_duration_s
         - window_size_samples
         - 2 * speech_pad_samples
     )
-    min_silence_samples = sampling_rate * min_silence_duration_ms / 1000 # 在每个silent需要等 min_silence_duration_ms 后才结束，
+    min_silence_samples = sampling_rate * min_silence_duration_ms / 1000 # Each silent state needs to wait for min_silence_duration_ms before it ends，
     min_silence_samples_at_max_speech = sampling_rate * 98 / 1000 # 0.098s # need to adjust？
 
     audio_length_samples = len(audio)
@@ -168,7 +168,7 @@ def get_speech_timestamps(
     # to save potential segment limits in case of maximum segment size reached
     prev_end = next_start = 0
 
-    # 大概是一段音频找出其中连续部分，如果遇到silent的话会先记录temp_end，然后如果没超过最小silent长度遇到active的情况下会重置temp_end。silent片段会分别记录silent的起终，在超过长度的时候切开（不完全确定，但是inf的最大长也遇不到）
+    # It's probably about finding the continuous part of an audio segment. If it encounters silence, it will first record temp_end. Then, if it doesn't exceed the minimum silent length, it will reset temp_end if it encounters active. The silent segment will record the start and end of the silent segment separately, and cut it when it exceeds the length (I'm not completely sure, but the maximum length of inf is not encountered).
 
     for i, speech_prob in enumerate(speech_probs):
         if (speech_prob >= threshold) and temp_end:
@@ -230,7 +230,7 @@ def get_speech_timestamps(
         current_speech["end"] = audio_length_samples
         speeches.append(current_speech)
 
-    # pad 多少ms，每个中间都会不足平分
+    # How many ms does pad have? Each middle part will be less than half.
     for i, speech in enumerate(speeches):
         if i == 0:
             speech["start"] = int(max(0, speech["start"] - speech_pad_samples))
@@ -274,7 +274,7 @@ def run_vad(ori_audio, sr, vad_options=None):
         if vad_options is None:
             vad_options = VadOptions()
 
-        # 确保传递给 get_speech_timestamps 的是 VadOptions 实例
+        # Make sure you pass a VadOptions instance to get_speech_timestamps
         speech_chunks = get_speech_timestamps(audio, vad_options=vad_options)
         # print(speech_chunks)
         audio = collect_chunks(audio, speech_chunks)
@@ -289,7 +289,7 @@ def run_vad(ori_audio, sr, vad_options=None):
             vad_audio = audio
         vad_audio = np.round(vad_audio * 32768.0).astype(np.int16)
         
-        # 这个round会有一定的误差
+        # This round will have a certain error
 
         vad_audio_bytes = vad_audio.tobytes()
 

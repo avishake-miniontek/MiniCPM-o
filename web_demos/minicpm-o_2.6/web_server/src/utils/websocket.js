@@ -26,7 +26,7 @@ class WebSocketClient {
         this.socket.onclose = event => {
             console.log('WebSocket connection closed', event);
             this.emit('close', event);
-            // 1005为主动关闭websocket
+            // 1005: Actively close websocket
             if (event.code !== 1005) {
                 this.reconnect();
             }

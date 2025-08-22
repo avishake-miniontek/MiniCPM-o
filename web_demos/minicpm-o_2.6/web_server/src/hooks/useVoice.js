@@ -16,7 +16,7 @@ export const encodeWAV = (samples, sampleRate) => {
     const numChannels = 1;
     const bitsPerSample = 16;
 
-    /* WAV 标头 */
+    /* WAV Header */
     writeString(view, 0, 'RIFF');
     view.setUint32(4, 36 + samples.length * 2, true);
     writeString(view, 8, 'WAVE');
@@ -31,7 +31,7 @@ export const encodeWAV = (samples, sampleRate) => {
     writeString(view, 36, 'data');
     view.setUint32(40, samples.length * 2, true);
 
-    /* PCM 数据 */
+    /* PCM data */
     floatTo16BitPCM(view, 44, samples);
 
     return new Blob([view], { type: 'audio/wav' });

@@ -6,7 +6,7 @@ export class TaskQueue {
         this.currentTask = null;
     }
 
-    // 添加任务到队列
+    // Adding tasks to the queue
     addTask(task) {
         this.tasks.push(task);
         if (!this.isRunning) {
@@ -14,22 +14,22 @@ export class TaskQueue {
         }
     }
 
-    // 删除任务
+    // Deleting a task
     removeTask(taskToRemove) {
         this.tasks = this.tasks.filter(task => task !== taskToRemove);
     }
 
-    // 清空任务队列
+    // Clear the task queue
     clearQueue() {
         this.tasks = [];
     }
 
-    // 暂停任务执行
+    // Pause task execution
     pause() {
         this.isPaused = true;
     }
 
-    // 恢复任务执行
+    // Resume task execution
     resume() {
         if (this.isPaused) {
             this.isPaused = false;
@@ -39,14 +39,14 @@ export class TaskQueue {
         }
     }
 
-    // 内部启动方法
+    // Internal startup method
     async start() {
         this.isRunning = true;
         while (this.tasks.length > 0 && !this.isPaused) {
             this.currentTask = this.tasks.shift();
             await this.currentTask();
 
-            // 检查是否暂停或任务队列已清空
+            // Check if the task queue is cleared or not
             if (this.isPaused || this.tasks.length === 0) {
                 this.isRunning = false;
                 break;
@@ -56,7 +56,7 @@ export class TaskQueue {
     }
 }
 
-// 示例任务函数
+// Example task function
 function exampleTask(id) {
     return () =>
         new Promise(resolve => {
@@ -64,31 +64,31 @@ function exampleTask(id) {
             setTimeout(() => {
                 console.log(`Task ${id} completed`);
                 resolve();
-            }, 1000); // 每个任务耗时1秒
+            }, 1000); // Each task takes 1 second
         });
 }
 
-// 测试示例
+// Test Example
 const queue = new TaskQueue();
 
-// 添加任务到队列
+// Adding tasks to the queue
 for (let i = 1; i <= 5; i++) {
     queue.addTask(exampleTask(i));
 }
 
-// 暂停队列，在2.5秒后执行
+// Pause the queue and execute after 2.5 seconds
 setTimeout(() => {
     console.log('Pausing queue...');
     queue.pause();
 }, 2500);
 
-// 恢复队列，在4.5秒后执行
+// Resume queue, execute after 4.5 seconds
 setTimeout(() => {
     console.log('Resuming queue...');
     queue.resume();
 }, 4500);
 
-// 清空队列，在3秒后执行
+// Clear the queue and execute after 3 seconds
 setTimeout(() => {
     console.log('Clearing queue...');
     queue.clearQueue();

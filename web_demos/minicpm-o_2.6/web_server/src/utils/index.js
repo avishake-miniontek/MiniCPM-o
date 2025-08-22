@@ -1,17 +1,17 @@
-// 判断终端是pc还是移动端
+// Determine whether the terminal is a PC or a mobile terminal
 export const isMobile = () => {
     let flag = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Linux/i.test(navigator.userAgent);
     const platform = navigator.platform;
-    // iPad上的Safari
+    // Safari on iPad
     if (platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
         flag = true;
     }
     return flag;
 };
-// 单片语音长度(单位：ms)
+// Single-chip voice length (unit: ms)
 const voicePerLength = 200;
 
-// 图片计数，算出在哪一次发送语音时，同时发送图片。例如一片语音100ms，一秒钟发送一次语音，即发送的第10片语音时需要带一张图片
+// Picture counting, calculates when to send a picture at the same time as the voice. For example, a voice message is 100ms long and a voice message is sent once a second, which means that the 10th voice message needs to be accompanied by a picture.
 export const maxCount = 1000 / voicePerLength;
 
 export const getChunkLength = sampleRate => {
@@ -25,11 +25,11 @@ export const isAvailablePort = port => {
     ].includes(port);
 };
 
-// 文件转base64格式
+// Convert files to base64 format
 export const fileToBase64 = file => {
     return new Promise((resolve, reject) => {
         if (!file) {
-            reject('文件不能为空');
+            reject('The file cannot be empty');
         }
         const reader = new FileReader();
         reader.onload = e => {
@@ -37,7 +37,7 @@ export const fileToBase64 = file => {
             resolve(base64String);
         };
         reader.onerror = () => {
-            reject('文件转码失败');
+            reject('File transcoding failed');
         };
         reader.readAsDataURL(file);
     });

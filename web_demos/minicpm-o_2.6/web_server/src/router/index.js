@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { basicRoutes } from './menu';
 
-// 创建一个可以被 Vue 应用程序使用的路由实例
+// Create a routing instance that can be used by the Vue application
 export const router = createRouter({
-    // 创建一个 hash 历史记录。
+    // Create a hash history.
     history: createWebHistory(import.meta.env.BASE_URL),
-    // 路由列表。
+    // Route list.
     routes: basicRoutes
 });
 
 // config router
-// 配置路由器
+// Configuring the Router
 export function setupRouter(app) {
     app.use(router);
 }

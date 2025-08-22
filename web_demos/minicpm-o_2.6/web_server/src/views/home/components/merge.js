@@ -101,14 +101,14 @@ export const mergeBase64ToBlob = base64List => {
     return audioUrl;
 };
 
-// 假设 base64Strings 是一个包含多个 Base64 编码 WAV 文件的数组
-// 注意：这些 Base64 字符串不应该包含 URI 前缀 (例如 "audio/wav;base64,")
+// Assume base64Strings is an array containing multiple Base64 encoded WAV files
+// Note: These Base64 strings should not contain the URI prefix (For example: "audio/wav;base64,")
 /**
  *
  * @param {Array} base64Strings
  * @returns
  */
-// 解码 Base64 字符串并合并二进制数据
+// Decode Base64 string and merge binary data
 export const mergeBase64WavFiles = base64Strings => {
     const binaryDataArray = base64Strings.map(base64 => {
         return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
@@ -124,7 +124,7 @@ export const mergeBase64WavFiles = base64Strings => {
         offset += arr.length;
     });
 
-    // 重新编码为 Base64 字符串
+    // Re-encode to Base64 string
     const binaryString = String.fromCharCode(...mergedArray);
     const mergedBase64 = btoa(binaryString);
 

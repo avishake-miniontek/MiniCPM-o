@@ -107,7 +107,7 @@
     const isFrontCamera = ref(true);
     const loading = ref(false);
 
-    const isEnd = ref(false); // sse接口关闭，认为模型已完成本次返回
+    const isEnd = ref(false); // The sse interface is closed, and the model is considered to have completed this return
 
     const isFirstPiece = ref(true);
     const allVoice = ref([]);
@@ -115,8 +115,8 @@
 
     const feedbackStatus = ref('');
     const curResponseId = ref('');
-    const delayTimestamp = ref(0); // 当前发送片延时
-    const delayCount = ref(0); // 当前剩余多少ms未发送到接口
+    const delayTimestamp = ref(0); // Current sending delay
+    const delayCount = ref(0); // The number of milliseconds remaining that have not been sent to the interface
 
     const modelVersion = ref('');
 
@@ -182,7 +182,7 @@
                     audioDOM.playsinline = true;
                     audioDOM.preload = 'auto';
                 }
-                // 每次call都需要生成新uid
+                // A new uid needs to be generated for each call
                 setNewUserId();
                 buildConnect();
                 await delay(100);
@@ -208,7 +208,7 @@
             return;
         }
         isFrontCamera.value = !isFrontCamera.value;
-        const facingMode = isFrontCamera.value ? 'environment' : 'user'; // 'user' 前置, 'environment' 后置
+        const facingMode = isFrontCamera.value ? 'environment' : 'user'; // 'user' comes first, 'environment' comes last
         initVideoStream(facingMode);
     };
     const initVideoStream = async facingMode => {

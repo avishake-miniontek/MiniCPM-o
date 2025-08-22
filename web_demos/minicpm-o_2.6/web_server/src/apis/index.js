@@ -1,20 +1,20 @@
-// 定时发送消息
+// Scheduled message sending
 export const sendMessage = data => {
     return useHttp.post('/api/v1/stream', data);
 };
-// 跳过当前
+// Skip current
 export const stopMessage = () => {
     return useHttp.post('/api/v1/stop');
 };
-// 上传音色文件
+// Upload sound files
 export const uploadFile = data => {
     return useHttp.post('/api/v1/upload_audio', data);
 };
-// 反馈
+// feedback
 export const feedback = data => {
     return useHttp.post('/api/v1/feedback', data);
 };
-// 上传配置
+// Upload Configuration
 export const uploadConfig = data => {
     return useHttp.post('/api/v1/init_options', data);
     // return useHttp.post('/api/v1/upload_audio', data);

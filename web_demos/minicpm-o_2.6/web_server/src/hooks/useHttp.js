@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { setNewUserId, getNewUserId } from './useRandomId';
 
-// 创建实例时配置默认值
+// Configuring default values ​​when creating an instance
 const service = axios.create({
     baseURL: '/',
     timeout: 30000,
     responseType: 'json'
 });
 
-// 请求拦截器
+// Request Interceptor
 service.interceptors.request.use(config => {
     if (config.url.includes('stream')) {
         config.timeout = 3000;
@@ -20,7 +20,7 @@ service.interceptors.request.use(config => {
     return config;
 });
 
-// 响应拦截器
+// Response Interceptors
 service.interceptors.response.use(
     response => {
         let res = response.data;

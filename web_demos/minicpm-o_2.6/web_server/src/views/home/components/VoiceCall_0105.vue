@@ -66,7 +66,7 @@
     const audioData = ref({
         base64Str: '',
         type: 'mp3'
-    }); // 自定义音色base64
+    }); // Custom sound base64
     const isCalling = defineModel();
     const taskQueue = ref([]);
     const running = ref(false);
@@ -74,7 +74,7 @@
     const textQueue = ref('');
     const textAnimationInterval = ref();
 
-    const isFirstReturn = ref(true); // 首次返回的音频是前端发给后端的音频片段，需要单独处理
+    const isFirstReturn = ref(true); // The first audio returned is the audio clip sent from the front end to the back end and needs to be processed separately.
 
     const audioPlayQueue = ref([]);
     const base64List = ref([]);
@@ -88,21 +88,21 @@
 
     const feedbackStatus = ref('');
     const curResponseId = ref('');
-    const delayTimestamp = ref(0); // 当前发送片延时
-    const delayCount = ref(0); // 当前剩余多少ms未发送到接口
+    const delayTimestamp = ref(0); // Current sending delay
+    const delayCount = ref(0); // The number of milliseconds remaining that have not been sent to the interface
 
     const modelVersion = ref('');
 
     let audioDOM = new Audio();
 
-    const isEnd = ref(false); // sse接口关闭，认为模型已完成本次返回
-    // 页面卸载时关闭录音
+    const isEnd = ref(false); // The sse interface is closed, and the model is considered to have completed this return
+    // Turn off recording when page unloads
     onBeforeUnmount(() => {
         stopRecording();
     });
     const vadStartTime = ref();
     let myvad = null;
-    let vadTimer = null; // vad定时器，用于检测1s内人声是否停止，1s内停止，可认为是vad误触，直接忽略，1s内未停止，则认为是人声，已自动跳过当前对话
+    let vadTimer = null; // The vad timer is used to detect whether the human voice stops within 1 second. If it stops within 1 second, it can be considered as a false vad trigger and ignored directly. If it does not stop within 1 second, it is considered as a human voice and the current conversation is automatically skipped.
     const vadStart = async () => {
         myvad = await MicVAD.new({
             onSpeechStart: () => {
@@ -110,7 +110,7 @@
                 if (!skipDisabled.value) {
                     vadTimer && clearTimeout(vadTimer);
                     vadTimer = setTimeout(() => {
-                        console.log('打断时间: ', +new Date());
+                        console.log('Interruption time: ', +new Date());
                         skipVoice();
                     }, 500);
                 }
@@ -143,7 +143,7 @@
     const initRecording = async () => {
         uploadUserConfig()
             .then(async () => {
-                // 每次call都需要生成新uid
+                // A new uid needs to be generated for each call
                 setNewUserId();
 
                 outputData.value = [];
@@ -157,7 +157,7 @@
                     `/ws/stream${window.location.search}&uid=${getNewUserId()}&service=minicpmo-server`
                 );
                 socket.connect();
-                // 建立连接后稍等一会儿再传送数据
+                // Wait a moment after establishing a connection before transmitting data
                 startRecording();
                 if (localStorage.getItem('canStopByVoice') === 'true') {
                     vadStart();
@@ -175,24 +175,24 @@
     const isFirstPiece = ref(true);
 
     const startRecording = async () => {
-        // 获取用户音频流
+        // Get the user's audio stream
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-        // 创建 AudioContext 和 MediaStreamAudioSourceNode
+        // Create an AudioContext and a MediaStreamAudioSourceNode
         audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
         const source = audioContext.createMediaStreamSource(stream);
 
         analyser.value = audioContext.createAnalyser();
-        // 将音频节点连接到分析器
+        // Connecting Audio Nodes to the Analyzer
         source.connect(analyser.value);
-        // 分析器设置
+        // Analyzer Settings
         analyser.value.fftSize = 256;
         const bufferLength = analyser.value.frequencyBinCount;
         dataArray.value = new Uint8Array(bufferLength);
-        // 开始绘制音波
+        // Start drawing sound waves
         drawBars();
 
-        // 创建 ScriptProcessorNode 用于捕获音频数据
+        // Create a ScriptProcessorNode to capture audio data
         const processor = audioContext.createScriptProcessor(256, 1, 1);
 
         processor.onaudioprocess = event => {
@@ -203,16 +203,16 @@
             }
             const data = event.inputBuffer.getChannelData(0);
             audioChunks.push(new Float32Array(data));
-            // 检查是否已经收集到1秒钟的数据
+            // Check if 1 second of data has been collected
             const totalBufferLength = audioChunks.reduce((total, curr) => total + curr.length, 0);
             const chunkLength = getChunkLength(audioContext.sampleRate);
             if (totalBufferLength >= chunkLength) {
-                // 合并到一个完整的数据数组，并裁剪成1秒钟
+                // Merge into a complete data array and crop to 1 second
                 const mergedBuffer = mergeBuffers(audioChunks, totalBufferLength);
                 const oneSecondBuffer = mergedBuffer.slice(0, chunkLength);
-                // 保存并处理成WAV格式
+                // Save and process into WAV format
                 addQueue(+new Date(), () => saveAudioChunk(oneSecondBuffer, +new Date()));
-                // 保留多余的数据备用
+                // Keep extra data for backup
                 audioChunks = [mergedBuffer.slice(chunkLength)];
             }
         };
@@ -300,7 +300,7 @@
                     delayCount.value = taskQueue.value.length;
                     resolve();
                 });
-                // 将Base64音频数据发送到后端
+                // Send Base64 audio data to the backend
                 // try {
                 //     await sendMessage(obj);
                 //     delayTimestamp.value = +new Date() - timestamp;
@@ -319,7 +319,7 @@
         }
         return result;
     };
-    // 建立连接
+    // Establishing a connection
     const buildConnect = async () => {
         const obj = {
             messages: [
@@ -373,11 +373,11 @@
                     textQueue.value += data.choices[0].text.replace('<end>', '');
                     console.warn('text return time -------------------------------', +new Date());
                 }
-                // 首次返回的是前端发给后端的音频片段，需要单独处理
+                // The first return is the audio clip sent by the front end to the back end, which needs to be processed separately
                 if (isFirstReturn.value) {
                     console.log('第一次');
                     isFirstReturn.value = false;
-                    // 如果后端返回的音频为空，需要重连
+                    // If the audio returned by the backend is empty, you need to reconnect
                     if (!data.choices[0].audio) {
                         buildConnect();
                         return;
@@ -402,11 +402,11 @@
                     }
                     allVoice.value.push(`data:audio/wav;base64,${data.choices[0].audio}`);
                 } else {
-                    // 发生异常了，直接重连
+                    // An exception occurred, reconnect directly
                     buildConnect();
                 }
                 if (data.choices[0].text.includes('<end>')) {
-                    console.log('收到结束标记了:', +new Date());
+                    console.log('Received the end tag:', +new Date());
                     if (
                         outputData.value[outputData.value.length - 1]?.type === 'BOT' &&
                         outputData.value[outputData.value.length - 1].audio === '' &&
@@ -426,7 +426,7 @@
                     console.log('taskQueue111111111: ', taskQueue.value, startIndex);
                     if (startIndex !== -1) {
                         taskQueue.value = taskQueue.value.slice(startIndex);
-                        console.log('截取后长度:', taskQueue.value, vadStartTime.value);
+                        console.log('Length after cutting:', taskQueue.value, vadStartTime.value);
                     }
                     buildConnect();
                 }
@@ -448,7 +448,7 @@
         }
         textAnimationInterval.value = requestAnimationFrame(drawText);
     };
-    // 返回的语音放到队列里，挨个播放
+    // The returned voices are put into the queue and played one by one
     const addAudioQueue = async item => {
         audioPlayQueue.value.push(item);
         if (isFirstPiece.value) {
@@ -460,18 +460,18 @@
             playAudio();
         }
     };
-    // 控制播放队列执行
+    // Control playback queue execution
     const playAudio = () => {
-        console.log('剩余播放列表:', audioPlayQueue.value, +new Date());
+        console.log('Remaining Playlists:', audioPlayQueue.value, +new Date());
 
         if (!isEnd.value && base64List.value.length >= 2) {
             const remainLen = base64List.value.length;
             const blob = mergeBase64ToBlob(base64List.value);
             audioDOM.src = blob;
             audioDOM.play();
-            console.error('前期合并后播放开始时间: ', +new Date());
+            console.error('Playback start time after pre-merge: ', +new Date());
             audioDOM.onended = () => {
-                console.error('前期合并后播放结束时间: ', +new Date());
+                console.error('End time of playback after early merging: ', +new Date());
                 base64List.value = base64List.value.slice(remainLen);
                 audioPlayQueue.value = audioPlayQueue.value.slice(remainLen);
                 playAudio();
@@ -483,9 +483,9 @@
             // let audio = new Audio();
             audioDOM.src = blob;
             audioDOM.play();
-            console.error('最后合并后播放开始时间: ', +new Date());
+            console.error('The start time of playback after the last merge: ', +new Date());
             audioDOM.onended = () => {
-                console.error('合并后播放结束时间: ', +new Date());
+                console.error('End time of playback after merging: ', +new Date());
                 // URL.revokeObjectURL(url);
                 base64List.value = [];
                 audioPlayQueue.value = [];
@@ -494,18 +494,18 @@
                 if (isCalling.value && !isReturnError.value) {
                     // skipDisabled.value = true;
                     taskQueue.value = [];
-                    // 打断前记录一下打断时间或vad触发事件
+                    // Record the interruption time or vad trigger event before interrupting
                     // vadStartTime.value = +new Date();
-                    // // 每次完成后只保留当前时刻往前推1s的语音
+                    // // After each completion, only the voice that is 1 second ahead of the current moment is retained
                     // console.log(
-                    //     '截取前长度:',
+                    //     'Length before cutting:',
                     //     taskQueue.value.map(item => item.time)
                     // );
                     // let startIndex = taskQueue.value.findIndex(item => item.time >= vadStartTime.value - 1000);
                     // if (startIndex !== -1) {
                     //     taskQueue.value = taskQueue.value.slice(startIndex);
                     //     console.log(
-                    //         '截取后长度:',
+                    //         'Length after cutting:',
                     //         taskQueue.value.map(item => item.time),
                     //         vadStartTime.value
                     //     );
@@ -525,22 +525,22 @@
                 console.warn('play done................');
                 skipDisabled.value = true;
             }
-            // 播放完成后且正在通话且接口未返回错误时开始下一次连接
+            // Start the next connection after playback is completed and the call is in progress and the interface does not return an error
             if (isEnd.value && isCalling.value && !isReturnError.value) {
                 // skipDisabled.value = true;
                 taskQueue.value = [];
-                // 打断前记录一下打断时间或vad触发事件
+                // Record the interruption time or vad trigger event before interrupting
                 // vadStartTime.value = +new Date();
-                // // 每次完成后只保留当前时刻往前推1s的语音
+                // // After each completion, only the voice that is 1 second ahead of the current moment is retained
                 // console.log(
-                //     '截取前长度:',
+                //     'Length before cutting:',
                 //     taskQueue.value.map(item => item.time)
                 // );
                 // let startIndex = taskQueue.value.findIndex(item => item.time >= vadStartTime.value - 1000);
                 // if (startIndex !== -1) {
                 //     taskQueue.value = taskQueue.value.slice(startIndex);
                 //     console.log(
-                //         '截取后长度:',
+                //         'Length after cutting:',
                 //         taskQueue.value.map(item => item.time),
                 //         vadStartTime.value
                 //     );
@@ -550,34 +550,34 @@
         }
     };
 
-    // 播放音频
+    // Play Audio
     const truePlay = async voice => {
         return new Promise(resolve => {
             audioDOM.src = 'data:audio/wav;base64,' + voice;
-            console.error('播放开始时间:', +new Date());
+            console.error('Playback start time:', +new Date());
             audioDOM
                 .play()
                 .then(() => {
-                    // console.error('播放结束时间: ', +new Date());
+                    // console.error('Playback end time: ', +new Date());
                 })
                 .catch(error => {
                     resolve();
                     if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
                         console.error('User interaction required or permission issue:', error);
-                        ElMessage.warning('音频播放失败');
+                        ElMessage.warning('Audio playback failed');
                     } else {
                         console.error('Error playing audio:', error);
                     }
                 });
 
             audioDOM.onended = () => {
-                console.error('播放结束时间: ', +new Date());
+                console.error('Playback end time: ', +new Date());
                 // URL.revokeObjectURL(url);
                 resolve();
             };
         });
     };
-    // 当队列中任务数大于0时，开始处理队列中的任务
+    // When the number of tasks in the queue is greater than 0, start processing the tasks in the queue
     const addQueue = (time, item) => {
         taskQueue.value.push({ func: item, time });
         if (taskQueue.value.length > 0 && !running.value) {
@@ -597,13 +597,13 @@
         }
     };
     const drawBars = () => {
-        // AnalyserNode接口的 getByteFrequencyData() 方法将当前频率数据复制到传入的 Uint8Array（无符号字节数组）中。
+        // The getByteFrequencyData() method of the AnalyserNode interface copies the current frequency data into the passed Uint8Array (unsigned byte array).
         analyser.value.getByteFrequencyData(dataArray.value);
         animationFrameId.value = requestAnimationFrame(drawBars);
     };
-    // 跳过当前片段
+    // Skip the current segment
     const skipVoice = async () => {
-        // 打断前记录一下打断时间或vad触发事件
+        // Record the interruption time or vad trigger event before interrupting
         vadStartTime.value = +new Date();
         if (!skipDisabled.value) {
             if (
@@ -614,16 +614,16 @@
             }
             base64List.value = [];
             audioPlayQueue.value = [];
-            // 跳过之后，只保留当前时间点两秒内到之后的音频片段
+            // After skipping, only the audio clips from two seconds after the current time point are retained
             console.log(
-                '截取前长度:',
+                'Length before cutting:',
                 taskQueue.value.map(item => item.time)
             );
             let startIndex = taskQueue.value.findIndex(item => item.time >= vadStartTime.value - 1000);
             if (startIndex !== -1) {
                 taskQueue.value = taskQueue.value.slice(startIndex);
                 console.log(
-                    '截取后长度:',
+                    'Length after cutting:',
                     taskQueue.value.map(item => item.time),
                     vadStartTime.value
                 );
@@ -643,7 +643,7 @@
             } catch (err) {}
         }
     };
-    // 每次call先上传当前用户配置
+    // Each call first uploads the current user configuration
     const uploadUserConfig = async () => {
         if (!localStorage.getItem('configData')) {
             return new Promise(resolve => resolve());

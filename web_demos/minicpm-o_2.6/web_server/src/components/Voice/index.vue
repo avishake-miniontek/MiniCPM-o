@@ -1,6 +1,6 @@
 <template>
     <div class="bars" id="bars" :style="boxStyle">
-        <!-- 柱形条 -->
+        <!-- Columnar Bar -->
         <div class="bar" v-for="(item, index) in defaultList" :key="index" :style="itemAttr(item)"></div>
     </div>
 </template>
@@ -21,7 +21,7 @@
             type: Boolean,
             default: false
         },
-        // 容器高度
+        // Container height
         boxStyle: {
             type: Object,
             default: () => {
@@ -30,7 +30,7 @@
                 };
             }
         },
-        // 柱形条宽度
+        // Bar width
         itemStyle: {
             type: Object,
             default: () => {
@@ -80,10 +80,10 @@
         () => props.isPlaying,
         newVal => {
             if (newVal) {
-                // 绿色
+                // green
                 bgColor.value = '#4dc100';
             } else {
-                // 蓝色
+                // blue
                 bgColor.value = '#4c5cf8';
             }
         }
@@ -95,19 +95,19 @@
             return;
         }
 
-        const maxHeight = document.querySelector('.bars').clientHeight; // 最大高度为容器的高度
+        const maxHeight = document.querySelector('.bars').clientHeight; // The maximum height is the height of the container
 
         const averageVolume = props.dataArray.reduce((sum, value) => sum + value, 0) / props.dataArray.length;
-        const normalizedVolume = props.isPlaying ? Math.random() : averageVolume / 128; // 将音量数据归一化为0到1之间
+        const normalizedVolume = props.isPlaying ? Math.random() : averageVolume / 128; // Normalize the volume data to between 0 and 1
 
         bars.forEach((bar, index) => {
             const minHeight = defaultList.value[index];
-            const randomFactor = Math.random() * 1.5 + 0.5; // 随机因子
+            const randomFactor = Math.random() * 1.5 + 0.5; // Random Factor
             const newHeight = Math.min(
                 maxHeight,
                 minHeight + (maxHeight - minHeight) * normalizedVolume * randomFactor
-            ); // 根据音量设置高度
-            bar.style.height = `${newHeight}px`; // 设置新的高度
+            ); // Set the height according to the volume
+            bar.style.height = `${newHeight}px`; // Set a new altitude
             bar.style.backgroundColor = bgColor.value;
         });
 
@@ -133,6 +133,6 @@
         transition:
             height 0.1s,
             background-color 0.1s;
-        border-radius: 5px; /* 圆角 */
+        border-radius: 5px; /* Rounded Corners */
     }
 </style>
